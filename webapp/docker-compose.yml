@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  app:
+    image: bobonntcha12/meu-app:latest
+    ports:
+      - "80:80"
+    deploy:
+      replicas: 3  # Definindo 3 réplicas para o serviço
+      placement:
+        constraints:
+          - node.role == worker
+
+  db:
+    image: bobonntcha12/postgres:14.5
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: myuser
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    deploy:
+      replicas: 1  # Definindo 1 réplica para o serviço
+      placement:
+        constraints:
+          - node.role == worker
+
+  ws:
+    image: bobonntcha12/php-websocket-server:latest
+    ports:
+      - "8000:80"
+    deploy:
+      replicas: 2  # Definindo 2 réplicas para o serviço
+      placement:
+        constraints:
+          - node.role == worker
+
+  visualizer:
+    image: dockersamples/visualizer:stable
+    ports:
+      - "8888:8080"
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+    deploy:
+      replicas: 1  # Definindo 1 réplica para o serviço
+      placement:
+        constraints:
+          - node.role == manager
+
+volumes:
+  pgdata:

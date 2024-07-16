@@ -1,0 +1,35 @@
+# Use uma imagem oficial do PHP 8 com Apache
+FROM php:8.0-apache
+
+# Instale as dependências do sistema necessárias
+RUN apt-get update && apt-get install -y \
+    libzip-dev \
+    unzip \
+    && docker-php-ext-install zip
+
+# Habilitar módulos Apache necessários
+RUN a2enmod rewrite
+
+# Defina o diretório de trabalho onde os arquivos da aplicação serão lidos
+WORKDIR /var/www/html
+
+# Copie todos os arquivos necessários para o diretório /var/www/html
+COPY public_html /var/www/html/public_html
+COPY vendor /var/www/html/vendor
+COPY .env /var/www/html/.env
+COPY composer.json /var/www/html/composer.json
+COPY composer.lock /var/www/html/composer.lock
+
+# Ajuste as permissões dos arquivos e diretórios
+RUN chown -R www-data:www-data /var/www/html
+RUN chmod -R 755 /var/www/html
+
+# Configurações adicionais do Apache, se necessário
+# Exemplo de ajuste do DocumentRoot e configuração
+RUN sed -i 's!/var/www/html!/var/www/html/public_html!g' /etc/apache2/sites-available/000-default.conf
+
+# Exponha a porta 80
+EXPOSE 80
+
+# Inicie o Apache quando o contêiner for iniciado
+CMD ["apache2-foreground"]

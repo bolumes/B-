@@ -8,6 +8,7 @@ Este projeto visa a implantação de múltiplos serviços Docker utilizando o Do
 
 Estrutura de projeto
  
+![Arquitetura ProjetoB](https://github.com/user-attachments/assets/aa24ff42-620f-4490-8888-78772a4fdb51)
 
 
 
